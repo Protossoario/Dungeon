@@ -54,51 +54,88 @@ public class SpiderScript : MonoBehaviour {
 			Collider2D colLeft = Physics2D.OverlapPoint(new Vector2(this.transform.position.x - 0.32f, this.transform.position.y));
 			Collider2D colRight = Physics2D.OverlapPoint(new Vector2(this.transform.position.x + 0.32f, this.transform.position.y));
 			// Checar en las 4 direcciones si esta el jugador a un lado
+			// TODO: Atacar al jugador en la direccion apropiada
 			if (colUp != null && colUp.CompareTag("Player")) {
+				direction = 1;
+				anim.SetBool("SpiderUp", true);
+				anim.SetBool("SpiderDown", false);
+				anim.SetBool("SpiderLeft", false);
+				anim.SetBool("SpiderRight", false);
 			}
 			else if (colDown != null && colDown.CompareTag("Player")) {
+				direction = 2;
+				anim.SetBool("SpiderUp", false);
+				anim.SetBool("SpiderDown", true);
+				anim.SetBool("SpiderLeft", false);
+				anim.SetBool("SpiderRight", false);
 			}
-			else if (colUp != null && colUp.CompareTag("Player")) {
+			else if (colLeft != null && colLeft.CompareTag("Player")) {
+				direction = 3;
+				anim.SetBool("SpiderUp", false);
+				anim.SetBool("SpiderDown", false);
+				anim.SetBool("SpiderLeft", true);
+				anim.SetBool("SpiderRight", false);
 			}
-			else if (colUp != null && colUp.CompareTag("Player")) {
+			else if (colRight != null && colRight.CompareTag("Player")) {
+				direction = 4;
+				anim.SetBool("SpiderUp", false);
+				anim.SetBool("SpiderDown", false);
+				anim.SetBool("SpiderLeft", false);
+				anim.SetBool("SpiderRight", true);
 			}
 			// Si no se ataca al jugador, checar el movimiento
-			else if (anim.GetBool("SpiderUp")) {
-				if (colUp != null && colUp.CompareTag("Wall")) {
-					anim.SetBool("SpiderUp", false);
-					anim.SetBool("SpiderDown", true);
-					direction = 2;
-				} else {
-					direction = 1;
-					time = timeMax;
+			else {
+				if (anim.GetBool("SpiderUp")) {
+					if (colUp != null && colUp.CompareTag("Wall")) {
+						anim.SetBool("SpiderUp", false);
+						anim.SetBool("SpiderDown", true);
+						direction = 2;
+					}
+					else {
+						direction = 1;
+						time = timeMax;
+						moving = true;
+					}
 				}
-			}
-			else if (anim.GetBool("SpiderDown")) {
-				if (colDown != null && colDown.CompareTag("Wall")) {
+				else if (anim.GetBool("SpiderDown")) {
+					if (colDown != null && colDown.CompareTag("Wall")) {
+						anim.SetBool("SpiderUp", true);
+						anim.SetBool("SpiderDown", false);
+						direction = 1;
+					}
+					else {
+						direction = 2;
+						time = timeMax;
+						moving = true;
+					}
+				}
+				else {
 					anim.SetBool("SpiderUp", true);
 					anim.SetBool("SpiderDown", false);
+					anim.SetBool("SpiderLeft", false);
+					anim.SetBool("SpiderRight", false);
 					direction = 1;
-				} else {
-					direction = 2;
-					time = timeMax;
 				}
 			}
 		}
 		// El turno se esta ejecutando y la arania se esta desplazando de un tile a otro
-		else if (moving) {
-			switch (direction) {
-			case 1:
-				rigidbody2D.velocity = new Vector2 (0f, maxSpeed);
-				break;
-			case 2:
-				rigidbody2D.velocity = new Vector2 (0f, -maxSpeed);
-				break;
+		else if (turn) {
+			if (moving) {
+				switch (direction) {
+				case 1:
+					rigidbody2D.velocity = new Vector2 (0f, maxSpeed);
+					break;
+				case 2:
+					rigidbody2D.velocity = new Vector2 (0f, -maxSpeed);
+					break;
+				}
 			}
 
 			time--;
 			if (time <= 0) {
 				direction = 0;
 				turn = false;
+				moving = false;
 				rigidbody2D.velocity = new Vector2 (0f, 0f);
 				GameObject dm = GameObject.Find("Dungeon Master");
 				DungeonMaster dmScript = dm.GetComponent<DungeonMaster>();
