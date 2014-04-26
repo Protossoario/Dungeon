@@ -31,7 +31,9 @@ public class DungeonMaster : MonoBehaviour {
 		for(int i = 0; i < spiders.Length; i++)
 		{
 			SpiderScript spiderScr = spiders[i].GetComponent<SpiderScript>();
-			spiderScr.startTurn();
+			if (spiderScr != null) {
+				spiderScr.startTurn();
+			}
 		}
 	}
 	public void notifyTurnFinish() {

@@ -6,6 +6,13 @@ public class PlayerScript : MonoBehaviour {
 	public float maxSpeed = 0.1f;
 	public int timeMax = 2;
 	public bool turn; // Check whether it's the players' turn to move, if true
+	/* Directions:
+	 * 0 = none
+	 * 1 = up
+	 * 2 = down
+	 * 3 = left
+	 * 4 = right
+	 */
 	int direction;
 	int time;
 	Animator anim;
